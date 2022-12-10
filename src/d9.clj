@@ -8,31 +8,25 @@
 ;(def input (slurp (io/resource "d9ex-2.txt")))
 (def input (slurp (io/resource "d9.txt")))
 
-(defn ->step
+(defn s->step
   [s]
   (let [[c d] (str/split s #" ")]
     (repeat (parse-long d) c)))
 
-(def raw-steps
-  (->> (str/split input #"\n")
-       (map ->step)
-       (apply concat)))
+(defn step->coords
+  [[x y] direction]
+  (cond
+    (= direction "U") [x (inc y)]
+    (= direction "D") [x (dec y)]
+    (= direction "L") [(dec x) y]
+    (= direction "R") [(inc x) y]))
 
-(defn move-head
-  [head direction]
-  (let [[x y] head]
-    (cond
-      (= direction "U") [x (inc y)]
-      (= direction "D") [x (dec y)]
-      (= direction "L") [(dec x) y]
-      (= direction "R") [(inc x) y])))
-
-(defn step-reducer
-  [acc step]
-  (conj acc (move-head (last acc) step)))
-
-(def head-steps
-  (reduce step-reducer [[0 0]] raw-steps))
+(def input-steps
+  (let [rf #(conj %1 (step->coords (last %1) %2))]
+    (->> (str/split input #"\n")
+         (map s->step)
+         (apply concat)
+         (reduce rf [[0 0]]))))
 
 (defn next-tail
   [head tail]
@@ -42,34 +36,34 @@
 (def memo-next-tail (memoize next-tail))
 
 (defn tail-steps
-  [head-steps]
-  (loop
-   [steps (rest head-steps)
-    tail (first head-steps)
-    visited [tail]]
-    (if (empty? steps)
-      visited
-      (if-let [tail (memo-next-tail (first steps) tail)]
-        (recur (rest steps) tail (conj visited tail))
-        (recur (rest steps) tail visited)))))
+
+  ([head-steps]
+   (loop
+    [steps   (rest head-steps)
+     tail    (first head-steps)
+     visited [tail]]
+     (if (empty? steps)
+       visited
+       (if-let [tail (memo-next-tail (first steps) tail)]
+         (recur (rest steps) tail (conj visited tail))
+         (recur (rest steps) tail visited)))))
+
+  ([n head-steps]
+   (loop [steps head-steps n n]
+     (if (= 0 n)
+       steps
+       (recur (tail-steps steps) (dec n))))))
 
 ;; Part one result
-(->> head-steps
-    (tail-steps)
-    (set)
-    (count))
-
-(defn nth-tail-steps
-  [n head-steps]
-  (loop [steps head-steps nth 0]
-    (if (= n nth)
-      steps
-      (recur (tail-steps steps) (inc nth)))))
+(->> input-steps
+     (tail-steps)
+     (set)
+     (count))
 
 ;; Part two result
 ;(bench
-(->> head-steps
-    (nth-tail-steps 9)
+(->> input-steps
+     (tail-steps 9)
      (set)
      (count))
 ;)
