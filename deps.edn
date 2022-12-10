@@ -1,4 +1,5 @@
 {:deps
  {org.clojure/core.async {:mvn/version "1.6.673"}
-  net.cgrand/xforms {:mvn/version "0.19.4"}}
+  net.cgrand/xforms {:mvn/version "0.19.4"}
+  criterium/criterium {:mvn/version "0.4.6"}}
  :paths ["src" "resources"]}
