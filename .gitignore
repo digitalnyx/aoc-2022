@@ -3,3 +3,4 @@
 .nrepl-port
 .rebl
 aoc-2022.iml
+resources/*.txt
