@@ -3,6 +3,13 @@
    [clojure.java.io :as io]
    [clojure.string :as str]))
 
+;; I did not figure out the P2 trick on my own, good explanation here:
+;; https://github.com/jake-gordon/aoc/blob/main/2022/D11/Explanation.md
+;; Basically, you can get the prod of all the 'operator' nums for each
+;; Monkey and then do 'item_worry % N' on each item. Doing this will
+;; reduce the values but still allow the items to be thrown to the
+;; correct monkey.
+
 ;(def input (slurp (io/resource "d11ex.txt")))
 (def input (slurp (io/resource "d11.txt")))
 
