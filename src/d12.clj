@@ -1,6 +1,5 @@
 (ns d12
   (:require
-   [clojure.data.priority-map :refer [priority-map]]
    [clojure.java.io :as io]
    [clojure.string :as str])
   (:import (clojure.lang PersistentQueue)))
